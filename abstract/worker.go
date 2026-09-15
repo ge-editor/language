@@ -9,9 +9,9 @@ import (
 	"github.com/ge-editor/gecore/lang"
 )
 
-// ------------------------------------------------------------------
+// --------------------
 // AbstractWorker implement gecore Mode interface
-// ------------------------------------------------------------------
+// --------------------
 
 func NewWorker() lang.Mode {
 	return &Worker{

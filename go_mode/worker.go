@@ -8,9 +8,9 @@ import (
 	"github.com/ge-editor/gecore/lang"
 )
 
-// ------------------------------------------------------------------
+// --------------------
 // GoMode implement gecore Mode interface
-// ------------------------------------------------------------------
+// --------------------
 
 func NewGoMode() lang.Mode {
 	return &GoMode{

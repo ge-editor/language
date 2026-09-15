@@ -6,9 +6,9 @@ import (
 	"github.com/ge-editor/language/abstract"
 )
 
-// ------------------------------------------------------------------
+// --------------------
 // Fundamental implement gecore Mode interface
-// ------------------------------------------------------------------
+// --------------------
 
 func NewFundamental() lang.Mode {
 	return &Fundamental{
