@@ -75,3 +75,7 @@ func (aw *Worker) GetSoftTab() bool {
 func (aw *Worker) SetSoftTab(isSoftTab bool) {
 	aw.isSoftTab = isSoftTab
 }
+
+func (aw *Worker) RecommendedColumnWidth() int {
+	return 80
+}

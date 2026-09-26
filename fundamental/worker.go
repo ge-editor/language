@@ -2,7 +2,6 @@ package fundamental
 
 import (
 	"github.com/ge-editor/gecore/lang"
-
 	"github.com/ge-editor/language/abstract"
 )
 

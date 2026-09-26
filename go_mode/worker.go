@@ -69,3 +69,9 @@ func (gm *GoMode) GetSoftTab() bool {
 func (gm *GoMode) SetSoftTab(isSoftTab bool) {
 	gm.isSoftTab = isSoftTab
 }
+
+// RecommendedColumnWidth returns the recommended column width.
+// It currently follows the default width used by golines.
+func (gm *GoMode) RecommendedColumnWidth() int {
+	return 100
+}
