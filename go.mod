@@ -2,7 +2,7 @@ module github.com/ge-editor/language
 
 go 1.26.0
 
-require github.com/ge-editor/gecore v0.1.8
+require github.com/ge-editor/gecore v0.1.10
 
 require (
 	github.com/clipperhouse/displaywidth v0.11.0 // indirect

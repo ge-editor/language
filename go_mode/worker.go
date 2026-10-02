@@ -75,3 +75,7 @@ func (gm *GoMode) SetSoftTab(isSoftTab bool) {
 func (gm *GoMode) RecommendedColumnWidth() int {
 	return 100
 }
+
+func (gm *GoMode) PageLineCount() int {
+	return 60
+}

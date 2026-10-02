@@ -79,3 +79,7 @@ func (aw *Worker) SetSoftTab(isSoftTab bool) {
 func (aw *Worker) RecommendedColumnWidth() int {
 	return 80
 }
+
+func (aw *Worker) PageLineCount() int {
+	return 60
+}
