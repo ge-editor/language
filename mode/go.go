@@ -1,4 +1,4 @@
-package go_mode
+package mode
 
 import (
 	"go/format"
