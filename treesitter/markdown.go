@@ -128,6 +128,10 @@ func (m *markdownParser) parseWithCancel(
 	})
 
 	if t == nil {
+		// Cancelled (or failed). tree-sitter would resume this parse on the
+		// next call; discard the half-finished state so the next parse
+		// starts fresh from the edited old tree and the new source.
+		m.parser.Reset()
 		return old
 	}
 	return t
@@ -177,8 +181,10 @@ func (m *markdownParser) buildSpans(ctx context.Context) []highlight.Span {
 		return nil
 	}
 
+	//  gelog.Debug("markdown buildSpans", "raw", len(raw))
 	// return flattenMarkdownSpans(raw)
 	return flattenSpans(raw)
+	// return raw // 試験的に
 }
 
 /*

@@ -170,6 +170,11 @@ func (g *goParser) parseWithCancel(ctx context.Context, src []byte, old *ts.Tree
 		},
 	})
 	if t == nil {
+		// Cancelled (or failed). tree-sitter would resume this parse on the
+		// next call; discard the half-finished state so the next parse
+		// starts fresh from the edited old tree and the new source.
+		g.parser.Reset()
+
 		// Either genuinely failed, or aborted via ProgressCallback. In
 		// both cases keep whatever tree we already have (old) rather
 		// than losing highlighting entirely; the next edit will retry.
@@ -204,9 +209,15 @@ func (g *goParser) buildSpans(ctx context.Context) []highlight.Span {
 	defer cursor.Close()
 
 	walk(ctx, cursor, func(n *ts.Node) {
-		if !n.IsNamed() {
-			return
-		}
+		// tree-sitter では package や func は名前付きノードではなく、
+		// 文法中のリテラル文字列から来る匿名ノードです。
+		// 次のような実装だと、これらは全部スキップされます。
+		// - node.IsNamed() が true のノードだけを走査している
+		// -NamedChild / NamedChildCount でたどっている
+		// - ToSexp() の出力を見て判断している(S式には匿名ノードが出ない)
+		// if !n.IsNamed() {
+		// 	return
+		// }
 		style, ok := theme.CodeColors[n.Kind()]
 		if !ok {
 			return

@@ -77,5 +77,6 @@ func flattenSpans(spans []highlight.Span) []highlight.Span {
 		out = append(out, s)
 	}
 	// gelog.Debug("flattenSpans out", out)
+	// gelog.Debug("markdown flattenSpans", "out", len(out))
 	return out
 }

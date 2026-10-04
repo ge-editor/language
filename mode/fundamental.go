@@ -1,4 +1,4 @@
-package fundamental
+package mode
 
 import (
 	"github.com/ge-editor/gecore/lang"
