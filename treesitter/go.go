@@ -171,9 +171,11 @@ func (g *goParser) parseWithCancel(ctx context.Context, src []byte, old *ts.Tree
 	})
 	if t == nil {
 		// Cancelled (or failed). tree-sitter would resume this parse on the
-		// next call; discard the half-finished state so the next parse
-		// starts fresh from the edited old tree and the new source.
-		g.parser.Reset()
+		// next call, and Reset() is not enough to make the parser safe to
+		// reuse (it can abort the process, see recoverAfterCancel). Replace
+		// the parser so the next parse starts fresh from the edited old
+		// tree and the new source.
+		g.parser = recoverAfterCancel(g.parser, g.lang, "go")
 
 		// Either genuinely failed, or aborted via ProgressCallback. In
 		// both cases keep whatever tree we already have (old) rather

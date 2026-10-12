@@ -14,8 +14,12 @@ package treesitter
 
 import (
 	"context"
+	"hash/crc32"
+	"time"
+	"unicode/utf8"
 
-	tsmd "github.com/tree-sitter-grammars/tree-sitter-markdown/bindings/go"
+	// tsmd "github.com/tree-sitter-grammars/tree-sitter-markdown/bindings/go"
+	tsmd "github.com/Bitspark/tree-sitter-markdown/bindings/go"
 	ts "github.com/tree-sitter/go-tree-sitter"
 
 	"github.com/ge-editor/editorleaf/editbuffer"
@@ -63,6 +67,10 @@ func (m *markdownParser) Parse(ctx context.Context, src []byte) {
 }
 
 func (m *markdownParser) Edit(ctx context.Context, e syntax.Edit, src []byte) {
+	// gelog.Debug("syntax", "Edit", e)
+	tracef("edit start=%d old_end=%d new_end=%d row=%d col=%d len(src)=%d",
+		e.StartByte, e.OldEndByte, e.NewEndByte, e.StartRow, e.StartCol, len(src))
+
 	if m.tree == nil {
 		m.Parse(ctx, src)
 		return
@@ -109,29 +117,49 @@ func (m *markdownParser) parseWithCancel(
 	src []byte,
 	old *ts.Tree,
 ) *ts.Tree {
-	read := func(offset int, _ ts.Point) []byte {
-		if offset < 0 || offset >= len(src) {
-			return nil
-		}
-		return src[offset:]
+	reuse := old
+	if dbgNoOld { // GE_TS_NOOLD
+		reuse = nil
 	}
 
-	t := m.parser.ParseWithOptions(read, old, &ts.ParseOptions{
-		ProgressCallback: func(_ ts.ParseState) bool {
-			select {
-			case <-ctx.Done():
-				return true
-			default:
-				return false
+	// GE_TS_TRACE: the input is written before the parse starts so that it
+	// survives an abort inside the C runtime.
+	dumpInput(src)
+	tracef("parse start bytes=%d utf8=%t crc=%08x reuse_old=%t nocb=%t",
+		len(src), utf8.Valid(src), crc32.ChecksumIEEE(src), reuse != nil, dbgNoCB)
+	started := time.Now()
+
+	var t *ts.Tree
+	if dbgNoCB { // GE_TS_NOCB: no ProgressCallback, no read callback
+		t = m.parser.Parse(src, reuse)
+	} else {
+		read := func(offset int, _ ts.Point) []byte {
+			if offset < 0 || offset >= len(src) {
+				return nil
 			}
-		},
-	})
+			return src[offset:]
+		}
+
+		t = m.parser.ParseWithOptions(read, reuse, &ts.ParseOptions{
+			ProgressCallback: func(_ ts.ParseState) bool {
+				select {
+				case <-ctx.Done():
+					return true
+				default:
+					return false
+				}
+			},
+		})
+	}
+	tracef("parse done took=%s tree=%t ctx_err=%v", time.Since(started), t != nil, ctx.Err())
 
 	if t == nil {
 		// Cancelled (or failed). tree-sitter would resume this parse on the
-		// next call; discard the half-finished state so the next parse
-		// starts fresh from the edited old tree and the new source.
-		m.parser.Reset()
+		// next call, and Reset() is not enough to make the parser safe to
+		// reuse (it can abort the process, see recoverAfterCancel). Replace
+		// the parser so the next parse starts fresh from the edited old
+		// tree and the new source.
+		m.parser = recoverAfterCancel(m.parser, m.lang, "markdown")
 		return old
 	}
 	return t
