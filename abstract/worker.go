@@ -5,19 +5,17 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
-
-	"github.com/ge-editor/gecore/lang"
 )
 
 // --------------------
 // AbstractWorker implement gecore Mode interface
 // --------------------
 
-func NewWorker() lang.Mode {
+/* func NewWorker() lang.Mode {
 	return &Worker{
 		exts: []string{},
 	}
-}
+} */
 
 type Worker struct {
 	exts      []string
