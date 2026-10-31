@@ -4,8 +4,8 @@ go 1.26.0
 
 require (
 	github.com/Bitspark/tree-sitter-markdown v0.5.3
-	github.com/ge-editor/editorleaf v0.1.18
-	github.com/ge-editor/gecore v0.1.18
+	github.com/ge-editor/editorleaf v0.1.19
+	github.com/ge-editor/gecore v0.1.19
 	github.com/ge-editor/theme v0.1.16
 	github.com/tree-sitter/go-tree-sitter v0.25.0
 	github.com/tree-sitter/tree-sitter-go v0.25.0
