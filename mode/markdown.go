@@ -16,7 +16,7 @@ func NewMarkdownMode() lang.Mode {
 	return &MarkdownMode{
 		exts:      []string{".md"},
 		tabWidth:  4,
-		isSoftTab: false,
+		isSoftTab: true,
 	}
 }
 
@@ -30,7 +30,7 @@ func (gm *MarkdownMode) Name() string {
 	return "Markdown"
 }
 
-// Matches checks if the given file path matches any of the extensions in MarkdownMode.exts
+// HasMatchingExtension checks if the given file path matches any of the extensions in MarkdownMode.exts
 func (gm *MarkdownMode) HasMatchingExtension(filePath string) bool {
 	ext := strings.ToLower(filepath.Ext(filePath)) // Get the file extension in lowercase
 	for _, validExt := range gm.exts {
@@ -78,4 +78,10 @@ func (gm *MarkdownMode) RecommendedColumnWidth() int {
 
 func (gm *MarkdownMode) PageLineCount() int {
 	return 60
+}
+
+// ShowTrailingWhitespace: two trailing spaces are a line break in Markdown,
+// so they are not flagged.
+func (gm *MarkdownMode) ShowTrailingWhitespace() bool {
+	return false
 }

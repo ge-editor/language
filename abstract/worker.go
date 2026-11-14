@@ -30,7 +30,7 @@ func (aw *Worker) Name() string {
 	return typeName
 }
 
-// Matches checks if the given file path matches any of the extensions in GoMode.exts
+// HasMatchingExtension checks if the given file path matches any of the extensions in GoMode.exts
 func (aw *Worker) HasMatchingExtension(filePath string) bool {
 	ext := strings.ToLower(filepath.Ext(filePath)) // Get the file extension in lowercase
 	for _, validExt := range aw.exts {
@@ -80,4 +80,9 @@ func (aw *Worker) RecommendedColumnWidth() int {
 
 func (aw *Worker) PageLineCount() int {
 	return 60
+}
+
+// ShowTrailingWhitespace: not visualized by default.
+func (aw *Worker) ShowTrailingWhitespace() bool {
+	return false
 }

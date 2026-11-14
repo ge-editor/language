@@ -30,7 +30,7 @@ func (org *OrgMode) Name() string {
 	return "Org"
 }
 
-// Matches checks if the given file path matches any of the extensions in OrgMode.exts
+// HasMatchingExtension checks if the given file path matches any of the extensions in OrgMode.exts
 func (org *OrgMode) HasMatchingExtension(filePath string) bool {
 	ext := strings.ToLower(filepath.Ext(filePath)) // Get the file extension in lowercase
 	for _, validExt := range org.exts {
@@ -78,4 +78,8 @@ func (org *OrgMode) RecommendedColumnWidth() int {
 
 func (org *OrgMode) PageLineCount() int {
 	return 60
+}
+
+func (org *OrgMode) ShowTrailingWhitespace() bool {
+	return false
 }

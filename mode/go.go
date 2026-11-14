@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ge-editor/gecore/lang"
+	"github.com/ge-editor/language/lsp"
 )
 
 // --------------------
@@ -30,7 +31,14 @@ func (gm *GoMode) Name() string {
 	return "Go"
 }
 
-// Matches checks if the given file path matches any of the extensions in GoMode.exts
+// LSPLanguageID and LSPServer implement lsp.LanguageServerProvider.
+func (gm *GoMode) LSPLanguageID() string { return "go" }
+
+func (gm *GoMode) LSPServer() lsp.ServerConfig {
+	return lsp.ServerConfig{Command: "gopls"}
+}
+
+// HasMatchingExtension checks if the given file path matches any of the extensions in GoMode.exts
 func (gm *GoMode) HasMatchingExtension(filePath string) bool {
 	ext := strings.ToLower(filepath.Ext(filePath)) // Get the file extension in lowercase
 	for _, validExt := range gm.exts {
@@ -78,4 +86,10 @@ func (gm *GoMode) RecommendedColumnWidth() int {
 
 func (gm *GoMode) PageLineCount() int {
 	return 60
+}
+
+// ShowTrailingWhitespace: gofmt removes trailing whitespace, so any that is
+// left is a mistake worth showing.
+func (gm *GoMode) ShowTrailingWhitespace() bool {
+	return true
 }
