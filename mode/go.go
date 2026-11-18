@@ -38,6 +38,22 @@ func (gm *GoMode) LSPServer() lsp.ServerConfig {
 	return lsp.ServerConfig{Command: "gopls"}
 }
 
+// goDelimiters: where the prose of a Go file is. The character literal is
+// there as code, so that '"' does not start a string.
+var goDelimiters = &lang.Delimiters{
+	LineComments:  []string{"//"},
+	BlockComments: []lang.BlockDelimiter{{Open: "/*", Close: "*/"}},
+	Strings: []lang.StringDelimiter{
+		{Open: `"`, Close: `"`, Escape: '\\'},
+		{Open: "`", Close: "`", Multiline: true},
+		{Open: `'`, Close: `'`, Escape: '\\', Code: true},
+	},
+}
+
+// SpellDelimiters implements lang.SpellDelimiterProvider: the spell check
+// looks at the comments and strings.
+func (gm *GoMode) SpellDelimiters() *lang.Delimiters { return goDelimiters }
+
 // HasMatchingExtension checks if the given file path matches any of the extensions in GoMode.exts
 func (gm *GoMode) HasMatchingExtension(filePath string) bool {
 	ext := strings.ToLower(filepath.Ext(filePath)) // Get the file extension in lowercase
