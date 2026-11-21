@@ -83,5 +83,11 @@ func (gm *MarkdownMode) PageLineCount() int {
 // ShowTrailingWhitespace: two trailing spaces are a line break in Markdown,
 // so they are not flagged.
 func (gm *MarkdownMode) ShowTrailingWhitespace() bool {
-	return false
+	return true
+}
+
+// CommentStyle implements lang.CommentStyleProvider: how a comment is
+// written, for the comment-region command.
+func (gm *MarkdownMode) CommentStyle() lang.CommentStyle {
+	return lang.CommentStyle{Block: &lang.BlockDelimiter{Open: "<!--", Close: "-->"}}
 }

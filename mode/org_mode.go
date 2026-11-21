@@ -83,3 +83,9 @@ func (org *OrgMode) PageLineCount() int {
 func (org *OrgMode) ShowTrailingWhitespace() bool {
 	return false
 }
+
+// CommentStyle implements lang.CommentStyleProvider: how a comment is
+// written, for the comment-region command.
+func (org *OrgMode) CommentStyle() lang.CommentStyle {
+	return lang.CommentStyle{Line: "#"}
+}
